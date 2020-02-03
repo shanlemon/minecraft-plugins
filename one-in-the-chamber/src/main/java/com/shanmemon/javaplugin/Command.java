@@ -10,8 +10,7 @@ public class Command implements CommandExecutor {
     public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            String command = "/oitc";
-            
+
         }
         return false;
     }

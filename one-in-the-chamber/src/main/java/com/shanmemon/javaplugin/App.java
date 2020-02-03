@@ -10,7 +10,7 @@ public class App extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        getLogger().info("Hello, SpigotMC!");
+        getLogger().info("Hello, SpigotMC!!!!!");
     }
 
     @Override
