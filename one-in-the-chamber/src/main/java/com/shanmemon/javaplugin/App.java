@@ -21,10 +21,9 @@ public class App extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(this, this);
 
         try {
-            st = new SignTeleport(getServer(), this,
-                    "D:/Users/Shan/Desktop/UT Spring 2020/minecraft-plugins/one-in-the-chamber/src/main/java/com/shanmemon/javaplugin/signs.JSON");
+            st = new SignTeleport(getServer(), this, "signs.JSON");
         } catch (Exception e) {
-            System.out.println("Failed to find sign JSON");
+            System.out.println("Failed to parse");
             e.printStackTrace();
         }
     }
@@ -41,7 +40,7 @@ public class App extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
-        // st.signTeleport(event);
+        st.signTeleport(event);
     }
 
 }

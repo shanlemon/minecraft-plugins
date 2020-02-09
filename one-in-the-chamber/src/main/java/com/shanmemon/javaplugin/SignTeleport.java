@@ -13,6 +13,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.json.simple.JSONArray;
@@ -25,16 +26,26 @@ public class SignTeleport {
     private HashMap<String, Location> arenas = new HashMap<>();
     private Server server;
     private Plugin plugin;
+    private final float RELATIVE_INDICATOR = 360.0f;
 
     public SignTeleport(Server s, Plugin p, String jsonSource) throws Exception {
         server = s;
         plugin = p;
-        generateArenas(jsonSource);
+
+        File fileDest = createDataFiles(jsonSource);
+        generateArenas(fileDest);
     }
 
-    private void generateArenas(String jsonSource) throws FileNotFoundException, IOException, ParseException {
+    private File createDataFiles(String jsonSource) {
+        File arenaInfoFile = plugin.getDataFolder();
+        if (arenaInfoFile.mkdir()) {
+            plugin.getLogger().info("Created \\One-In-The-Chamber directory.");
+        }
+        return new File(arenaInfoFile.toString() + "\\" + jsonSource);
+    }
 
-        Object obj = new JSONParser().parse(new FileReader(new File(jsonSource).getCanonicalFile()));
+    private void generateArenas(File jsonSource) throws FileNotFoundException, IOException, ParseException {
+        Object obj = new JSONParser().parse(new FileReader(jsonSource));
         JSONObject jo = (JSONObject) obj;
         JSONArray ja = (JSONArray) jo.get("signs");
 
@@ -65,19 +76,34 @@ public class SignTeleport {
         double toX = Double.parseDouble(toData[1]);
         double toY = Double.parseDouble(toData[2]);
         double toZ = Double.parseDouble(toData[3]);
-        float toPitch = Float.parseFloat(toData[4]);
-        float toYaw = Float.parseFloat(toData[5]);
 
-        arenas.put(arenaName, new Location(server.getWorld(toData[0]), toX, toY, toZ, toYaw, toPitch));
+        if (!((boolean) signData.get("keep_direction"))) {
+            float toPitch = Float.parseFloat(toData[4]);
+            float toYaw = Float.parseFloat(toData[5]);
+            arenas.put(arenaName, new Location(server.getWorld(toData[0]), toX, toY, toZ, toYaw, toPitch));
+        } else {
+            arenas.put(arenaName,
+                    new Location(server.getWorld(toData[0]), toX, toY, toZ, RELATIVE_INDICATOR, RELATIVE_INDICATOR));
+        }
     }
 
     public void signTeleport(PlayerInteractEvent event) {
-        if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK) {
+        if (event.getHand() == EquipmentSlot.HAND
+                && (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK)) {
             BlockState block = event.getClickedBlock().getState();
             if (block instanceof Sign) {
                 Sign sign = (Sign) block;
                 if (sign.hasMetadata("arena_name")) {
-                    event.getPlayer().teleport(arenas.get(sign.getMetadata("arena_name").get(0).asString()));
+                    Location toLocation = arenas.get(sign.getMetadata("arena_name").get(0).asString());
+                    Location playerLocation = event.getPlayer().getLocation();
+
+                    float pitch = toLocation.getPitch() == RELATIVE_INDICATOR ? playerLocation.getPitch()
+                            : toLocation.getPitch();
+                    float yaw = toLocation.getYaw() == RELATIVE_INDICATOR ? playerLocation.getYaw()
+                            : toLocation.getYaw();
+
+                    event.getPlayer().teleport(new Location(toLocation.getWorld(), toLocation.getX(), toLocation.getY(),
+                            toLocation.getZ(), yaw, pitch));
                 }
             }
         }
