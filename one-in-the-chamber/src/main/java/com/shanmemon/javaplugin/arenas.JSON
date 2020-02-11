@@ -1,0 +1,26 @@
+{
+    "arenas": [
+        {
+            "arena_name": "arena1",
+            "ffa": false,
+            "teams": [
+                {
+                    "team_color": "255 0 0",
+                    "text_color": "RED",
+                    "spawn_locations": [
+                        "world -103 63 -67 178 4",
+                        "world -108 63 -68 178 4"
+                    ]
+                },
+                {
+                    "team_color": "0 255 0",
+                    "text_color": "GREEN",
+                    "spawn_locations": [
+                        "world -108 63 -80 -5 2",
+                        "world -105 63 -80 -1 2"
+                    ]
+                }
+            ]
+        }
+    ]
+}
