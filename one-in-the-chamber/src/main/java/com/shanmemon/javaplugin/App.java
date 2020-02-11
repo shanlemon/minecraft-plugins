@@ -13,19 +13,27 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public class App extends JavaPlugin implements Listener {
 
-    SignTeleport st;
+    private Teleporter teleport;
+    public static Arenas ARENAS;
 
     @Override
     public void onEnable() {
         getLogger().info("Hello, SpigotMC!!!!!");
         getServer().getPluginManager().registerEvents(this, this);
+        try {
+            ARENAS = new Arenas(getServer(), this, "arenas.JSON");
+        } catch (Exception e) {
+            System.out.println("Faile to create ARENAS");
+            e.printStackTrace();
+        }
 
         try {
-            st = new SignTeleport(getServer(), this, "signs.JSON");
+            teleport = new Teleporter(getServer(), this, "teleport.JSON");
         } catch (Exception e) {
             System.out.println("Failed to parse");
             e.printStackTrace();
         }
+
     }
 
     @Override
@@ -40,7 +48,7 @@ public class App extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
-        st.signTeleport(event);
+        teleport.signTeleport(event);
     }
 
 }

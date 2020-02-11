@@ -21,14 +21,15 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-public class SignTeleport {
+public class Teleporter {
 
-    private HashMap<String, Location> arenas = new HashMap<>();
+    private HashMap<String, Location> endPoints = new HashMap<>();
     private Server server;
     private Plugin plugin;
+
     private final float RELATIVE_INDICATOR = 360.0f;
 
-    public SignTeleport(Server s, Plugin p, String jsonSource) throws Exception {
+    public Teleporter(Server s, Plugin p, String jsonSource) throws Exception {
         server = s;
         plugin = p;
 
@@ -67,11 +68,19 @@ public class SignTeleport {
 
         String arenaName = (String) signData.get("arena_name");
 
-        if (block instanceof Sign) {
+        if (!(block instanceof Sign)) {
+            System.out.println("JSON Error, Given coordinate is not a sign");
+        } else {
             Sign sign = (Sign) block;
             sign.setMetadata("arena_name", new FixedMetadataValue(plugin, arenaName));
         }
 
+        if (!((boolean) signData.get("tp_to_arena"))) {
+            assignToData(signData, arenaName);
+        }
+    }
+
+    private void assignToData(JSONObject signData, String arenaName) {
         String[] toData = ((String) signData.get("to")).split(" ");
         double toX = Double.parseDouble(toData[1]);
         double toY = Double.parseDouble(toData[2]);
@@ -80,9 +89,9 @@ public class SignTeleport {
         if (!((boolean) signData.get("keep_direction"))) {
             float toPitch = Float.parseFloat(toData[4]);
             float toYaw = Float.parseFloat(toData[5]);
-            arenas.put(arenaName, new Location(server.getWorld(toData[0]), toX, toY, toZ, toYaw, toPitch));
+            endPoints.put(arenaName, new Location(server.getWorld(toData[0]), toX, toY, toZ, toYaw, toPitch));
         } else {
-            arenas.put(arenaName,
+            endPoints.put(arenaName,
                     new Location(server.getWorld(toData[0]), toX, toY, toZ, RELATIVE_INDICATOR, RELATIVE_INDICATOR));
         }
     }
@@ -94,16 +103,30 @@ public class SignTeleport {
             if (block instanceof Sign) {
                 Sign sign = (Sign) block;
                 if (sign.hasMetadata("arena_name")) {
-                    Location toLocation = arenas.get(sign.getMetadata("arena_name").get(0).asString());
-                    Location playerLocation = event.getPlayer().getLocation();
+                    String arenaName = sign.getMetadata("arena_name").get(0).asString();
+                    Location toLocation = endPoints.get(arenaName);
+                    if (toLocation == null) {
+                        Arena arenaToTeleportTo = App.ARENAS.arenas.get(arenaName);
 
-                    float pitch = toLocation.getPitch() == RELATIVE_INDICATOR ? playerLocation.getPitch()
-                            : toLocation.getPitch();
-                    float yaw = toLocation.getYaw() == RELATIVE_INDICATOR ? playerLocation.getYaw()
-                            : toLocation.getYaw();
+                        Location endPoint = arenaToTeleportTo.tryJoinGame(event.getPlayer());
 
-                    event.getPlayer().teleport(new Location(toLocation.getWorld(), toLocation.getX(), toLocation.getY(),
-                            toLocation.getZ(), yaw, pitch));
+                        if (endPoint == null) {
+                            event.getPlayer().sendMessage("Failed to Join Arena: " + arenaName);
+                        } else {
+                            event.getPlayer().teleport(endPoint);
+                        }
+
+                    } else {
+                        Location playerLocation = event.getPlayer().getLocation();
+
+                        float pitch = toLocation.getPitch() == RELATIVE_INDICATOR ? playerLocation.getPitch()
+                                : toLocation.getPitch();
+                        float yaw = toLocation.getYaw() == RELATIVE_INDICATOR ? playerLocation.getYaw()
+                                : toLocation.getYaw();
+
+                        event.getPlayer().teleport(new Location(toLocation.getWorld(), toLocation.getX(),
+                                toLocation.getY(), toLocation.getZ(), yaw, pitch));
+                    }
                 }
             }
         }

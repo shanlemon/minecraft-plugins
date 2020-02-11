@@ -1,9 +1,13 @@
 package com.shanmemon.javaplugin;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Random;
 
+import org.bukkit.Location;
 import org.bukkit.Server;
+import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -32,6 +36,14 @@ public class Arena {
         }
 
         return output;
+    }
+
+    public Location tryJoinGame(Player player) {
+        teams.sort(null);
+        Team chosen = teams.get(0);
+        chosen.addPlayer();
+
+        return chosen.getRandomLocation();
     }
 
 }

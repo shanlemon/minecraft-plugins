@@ -1,17 +1,23 @@
 package com.shanmemon.javaplugin;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.json.simple.JSONObject;
 
-public class Team {
+public class Team implements Comparable {
     private int[] teamColor;
     private String textColor;
     private ArrayList<Location> spawnPoints;
 
+    private int teamSize;
+
+    // private ArrayList<Player> players;
+
     public Team(JSONObject jsonObject, Server server) {
+        teamSize = 0;
         String[] colors = ((String) jsonObject.get("team_color")).split(" ");
         this.teamColor = new int[colors.length];
 
@@ -34,6 +40,25 @@ public class Team {
             Location loc = new Location(server.getWorld(worldName), x, y, z, yaw, pitch);
             spawnPoints.add(loc);
         }
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if (o instanceof Team) {
+            Team team = (Team) o;
+            return teamSize - team.teamSize;
+        } else {
+            return 0;
+        }
+    }
+
+    public void addPlayer() {
+        teamSize++;
+    }
+
+    public Location getRandomLocation() {
+        Random r = new Random();
+        return spawnPoints.get(r.nextInt(spawnPoints.size()));
     }
 
 }
