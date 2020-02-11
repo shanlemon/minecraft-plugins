@@ -1,9 +1,7 @@
 package com.shanmemon.javaplugin;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
-import java.util.Random;
 
 import org.bukkit.Location;
 import org.bukkit.Server;

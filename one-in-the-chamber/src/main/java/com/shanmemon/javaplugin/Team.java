@@ -1,10 +1,12 @@
 package com.shanmemon.javaplugin;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
 
 import org.bukkit.Location;
 import org.bukkit.Server;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 public class Team implements Comparable {
@@ -16,20 +18,22 @@ public class Team implements Comparable {
 
     // private ArrayList<Player> players;
 
-    public Team(JSONObject jsonObject, Server server) {
+    public Team(JSONObject teamInfo, Server server) {
         teamSize = 0;
-        String[] colors = ((String) jsonObject.get("team_color")).split(" ");
+        spawnPoints = new ArrayList<>();
+        String[] colors = ((String) teamInfo.get("team_color")).split(" ");
         this.teamColor = new int[colors.length];
 
         for (int i = 0; i < colors.length; i++) {
             this.teamColor[i] = Integer.parseInt(colors[i]);
         }
 
-        this.textColor = (String) jsonObject.get("text_color");
+        this.textColor = (String) teamInfo.get("text_color");
 
-        for (String locationText : (String[]) jsonObject.get("spawn_locations")) {
-            String[] locationInfo = locationText.split(" ");
+        JSONArray spawnLocations = (JSONArray) teamInfo.get("spawn_locations");
 
+        for (Object o : spawnLocations) {
+            String[] locationInfo = ((String) o).split(" ");
             String worldName = locationInfo[0];
             double x = Double.parseDouble(locationInfo[1]);
             double y = Double.parseDouble(locationInfo[2]);

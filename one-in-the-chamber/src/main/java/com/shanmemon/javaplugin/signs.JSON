@@ -1,0 +1,16 @@
+{
+    "signs": [
+        {
+            "arena_name": "arena1",
+            "keep_direction": false,
+            "from": "world -117 68 -91",
+            "to": "world -166 65 -93 90 90"
+        },
+        {
+            "arena_name": "arena2",
+            "keep_direction": true,
+            "from": "world -116 68 -91",
+            "to": "world -93 73 -87"
+        }
+    ]
+}
