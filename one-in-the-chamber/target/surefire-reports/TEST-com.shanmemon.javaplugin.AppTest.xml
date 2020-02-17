@@ -45,7 +45,7 @@
     <property name="java.class.path" value="D:\apache-maven-3.6.3-bin\apache-maven-3.6.3\bin\..\boot\plexus-classworlds-2.6.0.jar"/>
     <property name="java.vm.specification.version" value="11"/>
     <property name="sun.arch.data.model" value="64"/>
-    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher package -f d:\Users\Shan\Desktop\UT Spring 2020\minecraft-plugins\one-in-the-chamber\pom.xml"/>
+    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher install -f d:\Users\Shan\Desktop\UT Spring 2020\minecraft-plugins\one-in-the-chamber\pom.xml"/>
     <property name="java.home" value="C:\Program Files\AdoptOpenJDK\jdk-11.0.5.10-hotspot"/>
     <property name="user.language" value="en"/>
     <property name="java.specification.vendor" value="Oracle Corporation"/>

@@ -5,9 +5,10 @@ package com.shanmemon.javaplugin;
  *
  */
 import org.bukkit.plugin.java.JavaPlugin;
-
+import org.bukkit.entity.Arrow;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
@@ -49,6 +50,15 @@ public class App extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         teleport.signTeleport(event);
+    }
+
+    @EventHandler
+    public void onArrowHit(ProjectileHitEvent event) {
+        System.out.println("ARROW HIT");
+        if (event.getEntity() instanceof Arrow) {
+            Arrow arrow = (Arrow) event.getEntity();
+            arrow.remove();
+        }
     }
 
 }

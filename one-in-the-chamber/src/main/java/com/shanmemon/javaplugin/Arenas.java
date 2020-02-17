@@ -43,7 +43,20 @@ public class Arenas {
         Iterator<JSONObject> it = ja.iterator();
         while (it.hasNext()) {
             JSONObject arenaData = it.next();
-            arenas.put((String) arenaData.get("arena_name"), new Arena(arenaData, server));
+            String arenaName = (String) arenaData.get("arena_name");
+
+            // TODO: MAKE DYNAMIC
+            switch (arenaName) {
+            case "one-in-the-chamber":
+                System.out.println("ADDING ONE IN THE CHAMBER ARENA");
+                arenas.put(arenaName, new OneInTheChamber(arenaData, server));
+                break;
+
+            default:
+                System.out.println("ADDING ARENA");
+                arenas.put(arenaName, new Arena(arenaData, server));
+                break;
+            }
         }
     }
 

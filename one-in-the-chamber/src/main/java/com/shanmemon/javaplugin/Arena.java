@@ -39,9 +39,13 @@ public class Arena {
     public Location tryJoinGame(Player player) {
         teams.sort(null);
         Team chosen = teams.get(0);
-        chosen.addPlayer();
+        chosen.addPlayer(player);
 
         return chosen.getRandomLocation();
+    }
+
+    public ArrayList<Team> getTeams() {
+        return teams;
     }
 
 }

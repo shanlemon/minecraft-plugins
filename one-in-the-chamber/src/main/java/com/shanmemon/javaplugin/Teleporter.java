@@ -113,6 +113,7 @@ public class Teleporter {
                         if (endPoint == null) {
                             event.getPlayer().sendMessage("Failed to Join Arena: " + arenaName);
                         } else {
+                            event.getPlayer().sendMessage("You have joined: " + arenaName);
                             event.getPlayer().teleport(endPoint);
                         }
 

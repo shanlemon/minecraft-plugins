@@ -6,6 +6,7 @@ import java.util.Random;
 
 import org.bukkit.Location;
 import org.bukkit.Server;
+import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -16,13 +17,14 @@ public class Team implements Comparable {
 
     private int teamSize;
 
-    // private ArrayList<Player> players;
+    private ArrayList<Player> players;
 
     public Team(JSONObject teamInfo, Server server) {
         teamSize = 0;
         spawnPoints = new ArrayList<>();
         String[] colors = ((String) teamInfo.get("team_color")).split(" ");
         this.teamColor = new int[colors.length];
+        players = new ArrayList<>();
 
         for (int i = 0; i < colors.length; i++) {
             this.teamColor[i] = Integer.parseInt(colors[i]);
@@ -56,8 +58,13 @@ public class Team implements Comparable {
         }
     }
 
-    public void addPlayer() {
+    public void addPlayer(Player player) {
+        players.add(player);
         teamSize++;
+    }
+
+    public ArrayList<Player> getPlayers() {
+        return players;
     }
 
     public Location getRandomLocation() {
